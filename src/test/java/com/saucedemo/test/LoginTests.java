@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Epic("Авторизация")
+@Epic("Авторизация") // add 2nd random comment
 @Feature("Логин")
 public class LoginTests extends BaseTest {
 

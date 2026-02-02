@@ -13,7 +13,7 @@ public class BaseTest {
     void setUp() {
         driver = DriverFactory.createDriver();
         driver.manage().window().maximize();
-        driver.get("https://www.saucedemo.com/");
+        driver.get("https://www.saucedemo.com/"); //add random comment
     }
 
     @AfterEach
