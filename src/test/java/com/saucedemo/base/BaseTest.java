@@ -10,14 +10,19 @@ public class BaseTest {
     protected WebDriver driver;
 
     @BeforeEach
-    void setUp() {
-        driver = DriverFactory.createDriver();
-        driver.manage().window().maximize();
-        driver.get("https://www.saucedemo.com/"); //add random comment
+    public void setUp() {
+
+        String browser = System.getProperty("browser", "chrome");
+        driver = DriverFactory.createDriver(browser);
+
+
+        driver.get("https://www.saucedemo.com/");
     }
 
     @AfterEach
-    void tearDown() {
-        driver.quit();
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
