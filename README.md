@@ -30,7 +30,8 @@ cd saucedemo-autotests
 
 -Тест через Maven
 
-mvn clean test
+mvn clean test (Google по дефолту)
+mvn clean test -Dbrowser=firefox (Firefox)
 
 -Генерация Allure отчета:
 
