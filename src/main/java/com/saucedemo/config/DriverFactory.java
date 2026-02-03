@@ -7,16 +7,23 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
 
-    public static WebDriver createDriver() {
-        String browser = System.getProperty("browser", "chrome");
+    public static WebDriver createDriver(String browser) {
+        WebDriver driver;
 
-        switch (browser) {
+        switch (browser.toLowerCase()) {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                return new FirefoxDriver();
+                driver = new FirefoxDriver();
+                break;
+
+            case "chrome":
             default:
                 WebDriverManager.chromedriver().setup();
-                return new ChromeDriver();
+                driver = new ChromeDriver();
+                break;
         }
+
+        driver.manage().window().maximize();
+        return driver;
     }
 }

@@ -1,62 +1,74 @@
 package com.saucedemo.test;
 
 import com.saucedemo.base.BaseTest;
-import com.saucedemo.pages.InventoryPage;
-import com.saucedemo.pages.LoginPage;
-import com.saucedemo.utils.WaitUtils;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Epic("Авторизация") // add 2nd random comment
-@Feature("Логин")
 public class LoginTests extends BaseTest {
 
-    @Test
-    @Story("Успешный логин")
-    void successfulLogin() {
-        LoginPage login = new LoginPage(driver);
-        login.login("standard_user", "secret_sauce");
+    private final String URL = "https://www.saucedemo.com/";
 
-        InventoryPage inventory = new InventoryPage(driver);
-        assertTrue(inventory.isOpened());
+
+    @Test
+    public void successfulLoginTest() {
+        login("standard_user", "secret_sauce");
+
+
+        assertTrue(driver.getCurrentUrl().contains("inventory.html"));
     }
 
-    @Test
-    void loginWithWrongPassword() {
-        LoginPage login = new LoginPage(driver);
-        login.login("standard_user", "wrong_pass");
 
-        assertTrue(login.getErrorText().contains("Username and password do not match"));
+    @Test
+    public void wrongPasswordTest() {
+        login("standard_user", "wrong_password");
+
+        WebElement error = driver.findElement(By.cssSelector("h3[data-test='error']"));
+        assertTrue(error.isDisplayed());
+        assertEquals("Epic sadface: Username and password do not match any user in this service", error.getText());
     }
 
-    @Test
-    void loginLockedUser() {
-        LoginPage login = new LoginPage(driver);
-        login.login("locked_out_user", "secret_sauce");
 
-        assertTrue(login.getErrorText().contains("locked out"));
+    @Test
+    public void lockedOutUserTest() {
+        login("locked_out_user", "secret_sauce");
+
+        WebElement error = driver.findElement(By.cssSelector("h3[data-test='error']"));
+        assertTrue(error.isDisplayed());
+        assertEquals("Epic sadface: Sorry, this user has been locked out.", error.getText());
     }
 
+    // 4️⃣ Пустые поля
     @Test
-    void loginWithEmptyFields() {
-        LoginPage login = new LoginPage(driver);
-        login.login("", "");
+    public void emptyFieldsTest() {
+        login("", "");
 
-        assertTrue(login.getErrorText().contains("Username is required"));
+        WebElement error = driver.findElement(By.cssSelector("h3[data-test='error']"));
+        assertTrue(error.isDisplayed());
+        assertEquals("Epic sadface: Username is required", error.getText());
     }
 
+
     @Test
-    void performanceGlitchUserLogin() {
-        LoginPage login = new LoginPage(driver);
-        login.login("performance_glitch_user", "secret_sauce");
+    public void performanceGlitchUserTest() {
+        login("performance_glitch_user", "secret_sauce");
 
-        InventoryPage inventory = new InventoryPage(driver);
-        WaitUtils.waitForVisibility(driver, 10, inventory);
 
-        assertTrue(inventory.isOpened());
+        assertTrue(driver.getCurrentUrl().contains("inventory.html"));
+    }
+
+
+    private void login(String username, String password) {
+        WebElement usernameField = driver.findElement(By.id("user-name"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement loginButton = driver.findElement(By.id("login-button"));
+
+        usernameField.clear();
+        usernameField.sendKeys(username);
+        passwordField.clear();
+        passwordField.sendKeys(password);
+        loginButton.click();
     }
 }
